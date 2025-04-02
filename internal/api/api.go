@@ -19,6 +19,7 @@ func NewRouters(r *Routers, token string) *fiber.App {
 
 	// Настройка CORS (разрешенные методы, заголовки, авторизация)
 	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "http://localhost",
 		AllowMethods:     "GET, POST, PUT, DELETE",
 		AllowHeaders:     "Accept, Authorization, Content-Type, X-CSRF-Token, X-REQUEST-SomeID",
 		ExposeHeaders:    "Link",
@@ -31,6 +32,6 @@ func NewRouters(r *Routers, token string) *fiber.App {
 
 	// Роут для создания задачи
 	apiGroup.Post("/create_task", r.Service.CreateTask)
-
+	apiGroup.Get("/task/:id", r.Service.TaskId)
 	return app
 }

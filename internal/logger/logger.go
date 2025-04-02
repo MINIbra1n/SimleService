@@ -25,7 +25,7 @@ func NewLogger(level string) (*zap.SugaredLogger, error) {
 			TimeKey:    tsKey,
 			EncodeTime: zapcore.RFC3339NanoTimeEncoder,
 		},
-		DisableStacktrace: true,
+		DisableStacktrace: false,
 	}.Build()
 	if err != nil {
 		return nil, errors.Wrap(err, "error logConfig.Build")

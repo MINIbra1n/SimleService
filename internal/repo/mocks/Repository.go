@@ -4,6 +4,7 @@ package mocks
 
 import (
 	context "context"
+	"simple-service/internal/models"
 	repo "simple-service/internal/repo"
 
 	mock "github.com/stretchr/testify/mock"
@@ -14,6 +15,9 @@ type Repository struct {
 	mock.Mock
 }
 
+func (m *Repository)TaskId(ctx context.Context,id int64)(*models.ResponseTask,error){
+	return nil,nil
+}
 // CreateTask provides a mock function with given fields: ctx, task
 func (_m *Repository) CreateTask(ctx context.Context, task repo.Task) (int, error) {
 	ret := _m.Called(ctx, task)

@@ -3,12 +3,14 @@ package repo
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pkg/errors"
 
 	"simple-service/internal/config"
+	"simple-service/internal/models"
 )
 
 // Слой репозитория, здесь должны быть все методы, связанные с базой данных
@@ -16,6 +18,7 @@ import (
 // SQL-запрос на вставку задачи
 const (
 	insertTaskQuery = `INSERT INTO tasks (title, description) VALUES ($1, $2) RETURNING id;`
+	selectTaskQuery = `SELECT title,description,status,created_at,updated_at FROM tasks WHERE id=$1`
 )
 
 type repository struct {
@@ -24,7 +27,8 @@ type repository struct {
 
 // Repository - интерфейс с методом создания задачи
 type Repository interface {
-	CreateTask(ctx context.Context, task Task) (int, error) // Создание задачи
+	CreateTask(ctx context.Context, task Task) (int, error)             // Создание задачи
+	TaskId(ctx context.Context, id int64) (*models.ResponseTask, error) // Получение задачи
 }
 
 // NewRepository - создание нового экземпляра репозитория с подключением к PostgreSQL
@@ -70,4 +74,12 @@ func (r *repository) CreateTask(ctx context.Context, task Task) (int, error) {
 		return 0, errors.Wrap(err, "failed to insert task")
 	}
 	return id, nil
+}
+func (r *repository) TaskId(ctx context.Context, id int64) (*models.ResponseTask, error) {
+	resTask := models.ResponseTask{ID: id}
+	err := r.pool.QueryRow(ctx, selectTaskQuery, id).Scan(&resTask.Title, &resTask.Description, &resTask.Status, &resTask.Created_at, &resTask.Updated_at)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to select task id ")
+	}
+	return &resTask, nil
 }

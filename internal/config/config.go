@@ -7,7 +7,7 @@ import (
 // Общая конфигурация сервиса, тут должны быть все переменные
 
 type AppConfig struct {
-	LogLevel   string
+	LogLevel   string `envconfig:"LOG_LEVEL" required:"debug"`
 	Rest       Rest
 	PostgreSQL PostgreSQL
 }
